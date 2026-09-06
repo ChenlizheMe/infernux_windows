@@ -4,15 +4,15 @@
 
 ![Windows 构建流程](package/plugin_pages/media/overview.png)
 
-使用 Windows 引擎 wheel 中的原生运行时构建 Windows x64 Player。插件负责注册 Windows 导出器，不重复携带引擎本体或完整编译工具链。
+插件携带预编译 Windows Player、CPython 运行时和可选并行模块。普通导出只组装这些文件和项目 cook 内容，不需要引擎源码、CMake 或编译工具链。
 
 ## 基本信息
 
 | 项目 | 内容 |
 | --- | --- |
 | 包标识 | `infernux/platform-windows` |
-| 插件版本 | 0.1.0 |
-| 引擎兼容范围 | >=0.4.0,<0.5 |
+| 插件版本 | 0.2.0 |
+| 引擎兼容范围 | ==0.4.0 |
 | 构建目标 | `windows-x64` |
 | 构建宿主 | Windows x64 |
 
@@ -26,7 +26,7 @@
 
 ## 环境要求
 
-Windows x64 的 Infernux 0.4.0，包含原生 Player 和 Python 3.13 运行时包。导出的 Player 使用 Vulkan。
+Windows x64 的 Infernux 0.4.0（Python 3.13）。对应的预编译 Player 载荷由本插件提供。导出的 Player 使用 Vulkan。
 
 ## 宿主边界
 
@@ -36,7 +36,7 @@ Windows x64 的 Infernux 0.4.0，包含原生 Player 和 Python 3.13 运行时�
 
 输出目录包含游戏可执行文件、运行依赖和打包后的游戏数据，分发时须保留完整目录。项目内容经过 cook 进入引擎二进制包，不以可编辑的 Assets/Library 目录树发布；二进制打包不等于 DRM。
 
-目标未出现时，检查插件是否启用，以及编辑器是否为 Windows x64。若提示原生 Player 或 Python 运行时缺失，应修复引擎安装；重新安装这个小型插件不能补齐引擎运行时。
+目标未出现时，检查插件是否启用，以及编辑器是否为 Windows x64。若提示 Player 载荷缺失或不兼容，请通过插件的版本页显式安装兼容的完整平台制品。
 
 ## 开发与打包
 
@@ -55,7 +55,9 @@ README.zh-CN.md
 
 运行 `python package.py dist/infernux.platform-windows.inxpkg` 本地打包。脚本仅使用 Python 标准库，不需要导入或安装 Infernux。在外层进行构建，最后将需要交付的文件放进 package/ 即可。
 
-维护者运行 `python release.py v0.1.0` 生成插件和发布清单；推送与插件版本一致的标签后，由 GitHub Actions 打包并上传两个文件。编辑器根据发布清单选择兼容版本。
+维护者构建引擎的 `windows-msvc-player` CMake preset。它直接将载荷产出到本仓库的 `package/editor/infernux_windows/player/`，将最终 `.inxpkg` 和发布清单产出到 `dist/`。发布 CI 在 Windows 宿主上，用对应引擎发布线构建本插件的精确版本；不生成或传递中间运行时 ZIP，也没有独立压缩包中转渠道。
+
+维护者运行 `python release.py v0.2.0` 生成插件和发布清单；推送与插件版本一致的标签后，由 GitHub Actions 打包并上传两个文件。编辑器根据发布清单选择兼容版本。
 
 ## 许可证
 

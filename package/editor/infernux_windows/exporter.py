@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
 from Infernux.engine.build.contracts import BuildTarget, PlatformExporter
 from Infernux.engine.build.host_player_export import (
@@ -40,13 +41,16 @@ class WindowsPlatformExporter(PlatformExporter):
             request,
             windows_target(),
             exporter_id=self.exporter_id,
+            player_runtime_root=str(Path(__file__).parent / "player"),
         )
 
     def create_plan(self, request):
         return create_host_player_plan(request)
 
     def execute(self, request, plan):
-        return execute_host_player_build(request, plan)
+        return execute_host_player_build(
+            request, plan, player_runtime_root=str(Path(__file__).parent / "player"),
+        )
 
 
 __all__ = ["WindowsPlatformExporter", "windows_target"]
