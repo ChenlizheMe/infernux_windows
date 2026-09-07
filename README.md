@@ -1,65 +1,50 @@
 # Infernux Windows Platform
 
-[简体中文](README.zh-CN.md) · [Releases](https://github.com/ChenlizheMe/infernux_windows/releases) · [Infernux](https://github.com/ChenlizheMe/Infernux)
+The official Windows build plugin for [Infernux](https://github.com/ChenlizheMe/Infernux), an open-source game engine with a C++17/Vulkan core and Python authoring layer. Install this plugin to export an Infernux project as a native Windows x64 game without compiling the engine yourself.
 
-![Windows build workflow](package/plugin_pages/media/overview.png)
+[简体中文](README.zh-CN.md) · [Infernux Engine](https://github.com/ChenlizheMe/Infernux) · [Plugin Template](https://github.com/ChenlizheMe/infernux_plugin_template) · [Releases](https://github.com/ChenlizheMe/infernux_windows/releases)
 
-Build Windows x64 Players using the precompiled Player, CPython runtime and optional parallel module shipped in this plugin. Ordinary exports assemble these files with cooked project content; no engine checkout, CMake, or compiler SDK is required.
+![Infernux Windows export workflow](package/plugin_pages/media/overview.png)
 
-## At a glance
+## What this plugin provides
 
-| Item | Value |
-| --- | --- |
-| Package | `infernux/platform-windows` |
-| Plugin version | 0.2.0 |
-| Engine compatibility | ==0.4.0 |
-| Target | `windows-x64` |
-| Build host | Windows x64 |
-| Rendering | Native Player / Vulkan |
+- The `windows-x64` build target in the Infernux Editor
+- A precompiled native Player, CPython 3.13 runtime, and parallel module
+- Vulkan rendering and the Windows export pipeline
+- Binary game-content packaging instead of an editable `Assets`/`Library` tree
 
-## Install
+| Package | Version | Compatible engine | Build host | Target |
+| --- | --- | --- | --- | --- |
+| `infernux/platform-windows` | 0.2.0 | Infernux 0.4.0 | Windows x64 | Windows x64 |
 
-1. Open your project in Infernux 0.4.0 and open the Plugins panel.
-2. Select Infernux Windows Platform in the official list, then import and enable it.
-3. Open the build settings and select the target. Resolve the reported prerequisites before exporting.
+## Install and use
 
-If your editor's bundled catalog predates this repository, add `https://github.com/ChenlizheMe/infernux_windows` as a GitHub plugin source, or import `infernux.platform-windows.inxpkg` from [Releases](https://github.com/ChenlizheMe/infernux_windows/releases/latest). GitHub's automatic source ZIP is the author repository, not the installable plugin artifact.
+Open **Plugins** in Infernux, select **Infernux Windows Platform** from the official catalog, then import and enable it. Official installs use the Infernux distribution service first and GitHub Releases if that channel is unavailable. You can also download `infernux.platform-windows.inxpkg` from this repository's Releases page and import it manually.
 
-## Requirements
+Open the build settings, choose `windows-x64`, and export. The result contains the executable, runtime libraries, and packaged game data; distribute the complete output directory together. Users do not need an engine checkout, CMake, or a compiler toolchain.
 
-Infernux 0.4.0 for Windows x64 with Python 3.13. This plugin owns the matching precompiled Player payload. The resulting Player uses Vulkan.
+This is a native-host exporter: Windows builds Windows. Installing it on Linux does not add Windows cross-compilation.
 
-## Host boundary
+## Repository guide
 
-This is a native-host exporter: Windows builds Windows. Installing this package on Linux does not enable Windows cross-compilation. Disabling or uninstalling it removes its build target.
-
-## Output and troubleshooting
-
-Export a game directory containing its executable, runtime dependencies and packaged game data. Keep the complete output together when distributing it. Project content is cooked into the engine's binary package, not published as the editable Assets/Library tree. Packaging is not DRM.
-
-If the target is absent, check that the package is enabled and the editor is Windows x64. If the build reports missing or incompatible Player files, explicitly install a compatible complete platform release through the plugin's Versions tab.
-
-## Develop and package
-
-Only `package/` becomes the InxPackage payload. The outer README, SVG illustration sources, release automation and build scripts remain repository files. In-editor documentation is separate, under `package/plugin_pages/`.
+The installable plugin lives in `package/`. `package.py`, `release.py`, tests, CI, documentation sources, and native build configuration are maintainer tooling and are not included in the `.inxpkg`.
 
 ```text
 package/
   inx_package.json
   editor/infernux_windows/
   plugin_pages/
-package.py
-release.py
-README.md
-README.zh-CN.md
 ```
 
-Run `python package.py dist/infernux.platform-windows.inxpkg` to package locally. This standalone script uses only Python's standard library and does not require an engine installation. Build outside package/, then place the files to ship inside package/ before packaging.
+Maintainers build the engine's `windows-msvc-player` preset, which writes the Player directly into this repository. To validate an existing payload locally:
 
-Maintainers build the engine's `windows-msvc-player` CMake preset. It produces the payload directly in this repository's `package/editor/infernux_windows/player/` and the final `.inxpkg` plus release manifest in `dist/`. Release CI builds this exact plugin revision with the matching engine release line on a Windows host. There is no intermediate runtime ZIP or separate archive-transfer channel.
+```powershell
+python package.py dist/infernux.platform-windows.inxpkg
+python release.py v0.2.0
+```
 
-Maintainers run `python release.py v0.2.0` to create the archive and its release manifest. Pushing a matching version tag publishes both files through GitHub Actions. The editor uses that manifest to select a compatible release.
+Pushing a matching `v<version>` tag makes GitHub Actions build and publish the `.inxpkg` and its release manifest.
 
 ## License
 
-[MIT](LICENSE). Third-party SDKs and the engine runtime keep their own licenses; they are not relicensed by this plugin.
+[MIT](LICENSE). Bundled third-party components retain their own licenses.
