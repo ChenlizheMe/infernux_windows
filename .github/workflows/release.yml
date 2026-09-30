@@ -85,15 +85,24 @@ jobs:
             engine/external/plugins/infernux_windows/dist/infernux.platform-windows.inxpkg
             engine/external/plugins/infernux_windows/dist/infernux.platform-windows.release.json
           if-no-files-found: error
+  publish:
+    needs: release
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: complete-platform-plugin
+          path: dist
       - name: Publish versioned plugin
-        if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          conda activate infernux
-          cd external/plugins/infernux_windows
           python -c 'import json,os; m=json.load(open("dist/infernux.platform-windows.release.json")); assert m["release_tag"] == os.environ["RELEASE_TAG"], "Release tag must match package version"'
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             gh release upload "$RELEASE_TAG" dist/infernux.platform-windows.inxpkg dist/infernux.platform-windows.release.json --clobber
