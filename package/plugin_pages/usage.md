@@ -6,7 +6,7 @@ Build Windows x64 Players using the precompiled Player, CPython runtime and opti
 
 ## Before building
 
-Infernux 0.4.0 for Windows x64 with Python 3.13. This plugin owns the matching precompiled Player payload. The resulting Player uses Vulkan.
+Infernux 0.4.1 for Windows x64 with Python 3.13. This plugin owns the matching precompiled Player payload. The resulting Player uses Vulkan.
 
 ## Host boundary
 

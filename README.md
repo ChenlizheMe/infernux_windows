@@ -15,7 +15,7 @@ The official Windows build plugin for [Infernux](https://github.com/ChenlizheMe/
 
 | Package | Version | Compatible engine | Build host | Target |
 | --- | --- | --- | --- | --- |
-| `infernux/platform-windows` | 0.2.0 | Infernux 0.4.0 | Windows x64 | Windows x64 |
+| `infernux/platform-windows` | 0.2.1 | Infernux 0.4.1 | Windows x64 | Windows x64 |
 
 ## Install and use
 
@@ -40,7 +40,7 @@ Maintainers build the engine's `windows-msvc-player` preset, which writes the Pl
 
 ```powershell
 python package.py dist/infernux.platform-windows.inxpkg
-python release.py v0.2.0
+python release.py v0.2.1
 ```
 
 Pushing a matching `v<version>` tag makes GitHub Actions build and publish the `.inxpkg` and its release manifest.

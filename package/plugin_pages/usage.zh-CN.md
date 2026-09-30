@@ -6,7 +6,7 @@
 
 ## 构建前准备
 
-Windows x64 的 Infernux 0.4.0（Python 3.13）。对应的预编译 Player 载荷由本插件提供。导出的 Player 使用 Vulkan。
+Windows x64 的 Infernux 0.4.1（Python 3.13）。对应的预编译 Player 载荷由本插件提供。导出的 Player 使用 Vulkan。
 
 ## 宿主边界
 

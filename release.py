@@ -8,7 +8,7 @@ from pathlib import Path
 
 import package
 
-RUNTIME_ENGINE_VERSION = "0.4.0"
+RUNTIME_ENGINE_VERSION = "0.4.1"
 
 
 def player_payload() -> tuple[Path, tuple[str, ...]]:

@@ -15,7 +15,7 @@
 
 | 包标识 | 版本 | 适配引擎 | 构建环境 | 目标平台 |
 | --- | --- | --- | --- | --- |
-| `infernux/platform-windows` | 0.2.0 | Infernux 0.4.0 | Windows x64 | Windows x64 |
+| `infernux/platform-windows` | 0.2.1 | Infernux 0.4.1 | Windows x64 | Windows x64 |
 
 ## 安装与导出
 
@@ -38,7 +38,7 @@ package/
 
 ```powershell
 python package.py dist/infernux.platform-windows.inxpkg
-python release.py v0.2.0
+python release.py v0.2.1
 ```
 
 推送与插件版本一致的 `v<version>` 标签后，GitHub Actions 会自动发布 `.inxpkg` 和对应的 release manifest。
