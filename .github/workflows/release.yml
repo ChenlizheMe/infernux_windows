@@ -6,6 +6,17 @@ on:
     tags: ['v*']
   pull_request:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing tag to publish (empty builds only)
+        required: false
+        type: string
+        default: ''
+      payload_run_id:
+        description: Reuse the complete-platform-plugin artifact from this run instead of rebuilding
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -23,7 +34,7 @@ jobs:
 
   release:
     needs: test
-    if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
+    if: (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch') && inputs.payload_run_id == ''
     runs-on: windows-2022
     timeout-minutes: 120
     permissions:
@@ -86,22 +97,27 @@ jobs:
             engine/external/plugins/infernux_windows/dist/infernux.platform-windows.release.json
           if-no-files-found: error
   publish:
-    needs: release
-    if: github.ref_type == 'tag'
+    needs: [test, release]
+    if: always() && needs.test.result == 'success' && (needs.release.result == 'success' || inputs.payload_run_id != '') && (github.ref_type == 'tag' || inputs.release_tag != '')
     runs-on: ubuntu-22.04
     permissions:
+      actions: read
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: actions/download-artifact@v4
         with:
+          run-id: ${{ inputs.payload_run_id || github.run_id }}
+          github-token: ${{ github.token }}
           name: complete-platform-plugin
           path: dist
       - name: Publish versioned plugin
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
           python -c 'import json,os; m=json.load(open("dist/infernux.platform-windows.release.json")); assert m["release_tag"] == os.environ["RELEASE_TAG"], "Release tag must match package version"'
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
